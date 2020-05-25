@@ -33,9 +33,9 @@ public class AmisFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        users=new ArrayList<>();
-        View view= inflater.inflate(R.layout.fragment_amis, container, false);
-        recyclerView=(RecyclerView) view.findViewById(R.id.recycleview);
+        users = new ArrayList<>();
+        View view = inflater.inflate(R.layout.fragment_amis, container, false);
+        recyclerView = (RecyclerView) view.findViewById(R.id.recycleview);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
@@ -44,22 +44,24 @@ public class AmisFragment extends Fragment {
         return view;
     }
 
-    private void AllUsers(){
-        final FirebaseUser firebaseUser= FirebaseAuth.getInstance().getCurrentUser();
-        DatabaseReference reference=FirebaseDatabase.getInstance().getReference("utilisateurs");
+    private void AllUsers() {
+        final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("utilisateurs");
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 users.clear();
-                for(DataSnapshot dataSnapshot1: dataSnapshot.getChildren()){
-                    User user=dataSnapshot1.getValue(User.class);
-                    assert user!=null;
-                    if(!user.getId().equals(firebaseUser.getUid()))
-                    {
-                        users.add(user);
+                for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
+                    User user = dataSnapshot1.getValue(User.class);
+                    if (user != null && user.getId() != null) {
+                        String userId = user.getId();
+                        String Uid = firebaseUser.getUid();
+                        if (!userId.equals(Uid)) {
+                            users.add(user);
+                        }
                     }
                 }
-                userAdapter=new UserAdapter(getContext(),users,false);
+                userAdapter = new UserAdapter(getContext(), users, false);
                 recyclerView.setAdapter(userAdapter);
             }
 
